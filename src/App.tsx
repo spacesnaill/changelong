@@ -4,6 +4,7 @@ import './App.css';
 import { Octokit } from '@octokit/rest';
 import type { Endpoints } from '@octokit/types';
 import Fuse from 'fuse.js';
+import { DebounceInput } from 'react-debounce-input';
 
 import ChangelogList from './components/ChangelogList';
 import BackToTop from './components/BackToTop';
@@ -91,13 +92,15 @@ function App({}: AppProps) {
         </button>
       </div>
       <div className={styles.formContainer}>
-        <input
-          value={searchQuery}
+        <DebounceInput
+          minLength={2}
+          debounceTimeout={300}
           onChange={handleSearchQueryChange}
           id="search"
           type="text"
           placeholder="Search"
           className={styles.search}
+          value={searchQuery}
         />
       </div>
       <div className={styles.listContainer}>
