@@ -1,0 +1,18 @@
+.listContainer {
+    justify-content: center;
+    margin: auto;
+    width: 60%;
+    height: 100vh;
+}
+
+.formContainer {
+    display: flex;
+    justify-content: center;
+    margin: auto;
+    margin-top: 2em;
+    width: 60%;
+}
+
+.formContainer > input {
+    margin-right: 2em;
+}
