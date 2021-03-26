@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@octokit/rest": "^18.4.0",
+    "fuse.js": "^6.4.6",
     "react": "^17.0.0",
     "react-dom": "^17.0.0",
     "react-markdown": "^5.0.3",
