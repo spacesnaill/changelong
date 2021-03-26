@@ -7,19 +7,22 @@ import styles from '../styles/changelog.module.css';
 import ChangelogItem from './ChangelogItem';
 
 interface IProps {
-  releaseList: Endpoints['GET /repos/{owner}/{repo}/releases']['response'];
+  releaseList: Endpoints['GET /repos/{owner}/{repo}/releases']['response']['data'];
 }
 
 const ChangelogList: React.FC<IProps> = ({ releaseList }) => {
-  const { data } = releaseList;
   return (
-    <List
-      totalCount={data.length}
-      data={data}
-      itemContent={(index: number) => (
-        <ChangelogItem index={index} data={data} />
-      )}
-    />
+    <>
+      {releaseList && releaseList.length > 0 ? (
+        <List
+          totalCount={releaseList.length}
+          data={releaseList}
+          itemContent={(index: number) => (
+            <ChangelogItem index={index} data={releaseList} />
+          )}
+        />
+      ) : null}
+    </>
   );
 };
 
