@@ -91,12 +91,13 @@ function App({}: AppProps) {
         </button>
       </div>
       <div className={styles.formContainer}>
-        <label htmlFor="search">Search: </label>
         <input
           value={searchQuery}
           onChange={handleSearchQueryChange}
           id="search"
           type="text"
+          placeholder="Search"
+          className={styles.search}
         />
       </div>
       <div className={styles.listContainer}>

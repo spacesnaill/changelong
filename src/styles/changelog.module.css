@@ -3,6 +3,9 @@
     margin: auto;
     width: 60%;
     height: 100vh;
+    border: 2px gray solid;
+    border-radius: 5px;
+    padding: 0.5em
 }
 
 .formContainer {
@@ -15,4 +18,10 @@
 
 .formContainer > input {
     margin-right: 2em;
+}
+
+.search {
+    text-align: center;
+    width: 100%;
+    margin-bottom: 2em;
 }
