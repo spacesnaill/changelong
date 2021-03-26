@@ -1,31 +1,26 @@
-import React from "react";
+import React from 'react';
 
-import { Endpoints } from "@octokit/types";
-import ReactMarkdown from 'react-markdown';
+import type { Endpoints } from '@octokit/types';
+import { Virtuoso as List } from 'react-virtuoso';
 
-interface props {
-  releaseList: Endpoints["GET /repos/{owner}/{repo}/releases"]["response"];
+import styles from '../styles/changelog.module.css';
+import ChangelogItem from './ChangelogItem';
+
+interface IProps {
+  releaseList: Endpoints['GET /repos/{owner}/{repo}/releases']['response'];
 }
 
-const ChangelogList: React.FC<props> = ({releaseList}) => {
-  const {data} = releaseList;
+const ChangelogList: React.FC<IProps> = ({ releaseList }) => {
+  const { data } = releaseList;
   return (
-    data.map(release => {
-      return (
-        <div key={release.node_id}>
-          <div>
-            Release: {release.name}
-          </div>
-          <div>
-            Date: {release.created_at}
-          </div>
-          <ReactMarkdown children={release.body as string} />
-          <hr />
-        </div>
-      )
-    })
-  )
-
-}
+    <List
+      totalCount={data.length}
+      data={data}
+      itemContent={(index: number) => (
+        <ChangelogItem index={index} data={data} />
+      )}
+    />
+  );
+};
 
 export default ChangelogList;
