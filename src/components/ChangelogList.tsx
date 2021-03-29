@@ -5,9 +5,10 @@ import { Virtuoso as List } from 'react-virtuoso';
 
 import styles from '../styles/changelog.module.css';
 import ChangelogItem from './ChangelogItem';
+import type { releaseResponseData } from '../../types/get-release-response';
 
 interface IProps {
-  releaseList: Endpoints['GET /repos/{owner}/{repo}/releases']['response']['data'];
+  releaseList: releaseResponseData;
 }
 
 const ChangelogList: React.FC<IProps> = ({ releaseList }) => {

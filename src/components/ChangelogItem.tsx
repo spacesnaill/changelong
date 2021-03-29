@@ -1,7 +1,8 @@
 import React from 'react';
 
-import type { Endpoints } from '@octokit/types';
 import ReactMarkdown from 'react-markdown';
+
+import type { releaseResponseData } from '../../types/get-release-response';
 
 const getHumanReadableDate = (dateString: string) => {
   const date = new Date(dateString);
@@ -17,7 +18,7 @@ const ChangelogItem = ({
   data,
 }: {
   index: number;
-  data: Endpoints['GET /repos/{owner}/{repo}/releases']['response']['data'];
+  data: releaseResponseData;
 }) => {
   const { node_id, body, name, created_at } = data[index];
 
