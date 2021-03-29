@@ -2,23 +2,19 @@ import React, { useState, useEffect, SyntheticEvent, useRef } from 'react';
 import './App.css';
 
 import { Octokit } from '@octokit/rest';
-import type { Endpoints } from '@octokit/types';
 import Fuse from 'fuse.js';
 import { DebounceInput } from 'react-debounce-input';
 
 import ChangelogList from './components/ChangelogList';
 import BackToTop from './components/BackToTop';
 import styles from './styles/changelog.module.css';
+import type { releaseResponseData } from '../types/get-release-response';
 
 interface AppProps {}
 
 function App({}: AppProps) {
-  const originalList = useRef<
-    Endpoints['GET /repos/{owner}/{repo}/releases']['response']['data']
-  >([]);
-  const [list, setList] = useState<
-    Endpoints['GET /repos/{owner}/{repo}/releases']['response']['data'] | null
-  >(null);
+  const originalList = useRef<releaseResponseData>([]);
+  const [list, setList] = useState<releaseResponseData | null>(null);
 
   const [owner, setOwner] = useState<string>('');
   const [repo, setRepo] = useState<string>('');
@@ -44,17 +40,25 @@ function App({}: AppProps) {
   };
 
   const octokit = new Octokit();
-  useEffect(() => {}, []);
 
-  const handleSubmit = (event: SyntheticEvent) => {
+  const handleSubmit = async (event: SyntheticEvent) => {
     event.preventDefault();
-    octokit.repos.listReleases({ owner, repo, per_page }).then((response) => {
-      setList(response.data);
-      originalList.current = response.data;
-    });
-  };
+    let releaseList: releaseResponseData = [];
+    let page = 1;
+    let fullReleaseList: releaseResponseData = [];
+    do {
+      releaseList = (
+        await octokit.repos.listReleases({ owner, repo, per_page, page })
+      ).data;
+      console.log(releaseList);
+      fullReleaseList = fullReleaseList.concat(releaseList);
+      console.log(`fullReleaseList`, fullReleaseList);
+      page = page + 1;
+    } while (releaseList.length > 0);
 
-  useEffect(() => {}, [originalList]);
+    setList(fullReleaseList);
+    originalList.current = fullReleaseList;
+  };
 
   useEffect(() => {
     if (searchQuery.length > 0) {
