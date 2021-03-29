@@ -10,12 +10,14 @@ import {
   TextField,
   useMediaQuery,
   CssBaseline,
+  InputAdornment,
 } from '@material-ui/core';
 import {
   makeStyles,
   createMuiTheme,
   ThemeProvider,
 } from '@material-ui/core/styles';
+import SearchIcon from '@material-ui/icons/Search';
 
 import ChangelogList from './components/ChangelogList';
 import BackToTop from './components/BackToTop';
@@ -93,9 +95,7 @@ function App({}: AppProps) {
       releaseList = (
         await octokit.repos.listReleases({ owner, repo, per_page, page })
       ).data;
-      console.log(releaseList);
       fullReleaseList = fullReleaseList.concat(releaseList);
-      console.log(`fullReleaseList`, fullReleaseList);
       page = page + 1;
     } while (releaseList.length > 0);
 
@@ -111,7 +111,6 @@ function App({}: AppProps) {
       });
       const results = fuse.search(searchQuery);
       const mappedResults = results.map((data) => data.item);
-      console.log(results);
       setList(mappedResults);
     } else {
       setList(originalList.current);
@@ -159,7 +158,14 @@ function App({}: AppProps) {
           onChange={handleSearchQueryChange}
           id="search"
           type="text"
-          placeholder="Search"
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon />
+              </InputAdornment>
+            ),
+          }}
+          placeholder="Search Releases"
           className={styles.search}
           value={searchQuery}
           element={TextField}
