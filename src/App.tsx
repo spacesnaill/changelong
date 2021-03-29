@@ -11,16 +11,18 @@ import {
   useMediaQuery,
   CssBaseline,
   InputAdornment,
+  CircularProgress,
+  Snackbar,
+  SnackbarContent,
+  Typography,
 } from '@material-ui/core';
-import {
-  makeStyles,
-  createMuiTheme,
-  ThemeProvider,
-} from '@material-ui/core/styles';
+import { unstable_createMuiStrictModeTheme as createMuiTheme } from '@material-ui/core';
+import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
+import { makeStyles, ThemeProvider } from '@material-ui/core/styles';
 import SearchIcon from '@material-ui/icons/Search';
+import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
 
 import ChangelogList from './components/ChangelogList';
-import BackToTop from './components/BackToTop';
 import type { releaseResponseData } from '../types/get-release-response';
 
 interface AppProps {}
@@ -42,7 +44,24 @@ const useStyles = makeStyles({
   },
   formInput: { marginRight: '2em' },
   search: { textAlign: 'center', width: '68%', marginBottom: '2em' },
+  spinner: { display: 'flex', margin: 'auto' },
+  snackbarContent: {
+    color: '#fff',
+    fontWeight: 500,
+    backgroundColor: '#f44336',
+  },
+  snackbarMessageContainer: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  snackbarMessageIcon: {
+    marginRight: '0.3em',
+  },
 });
+
+function Alert(props: AlertProps) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 function App({}: AppProps) {
   const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
@@ -65,6 +84,9 @@ function App({}: AppProps) {
   const [repo, setRepo] = useState<string>('');
   const per_page = 100;
 
+  const [showSpinner, setShowSpinner] = useState(false);
+  const [showSnackbar, setShowSnackbar] = useState(false);
+
   const [searchQuery, setSearchQuery] = useState<string>('');
 
   const handleOwnerChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -84,21 +106,31 @@ function App({}: AppProps) {
     setSearchQuery(value);
   };
 
+  const handleSnackbarClose = () => {
+    setShowSnackbar(false);
+  };
+
   const octokit = new Octokit();
 
   const handleSubmit = async (event: SyntheticEvent) => {
     event.preventDefault();
+    setShowSpinner(true);
     let releaseList: releaseResponseData = [];
     let page = 1;
     let fullReleaseList: releaseResponseData = [];
     do {
-      releaseList = (
-        await octokit.repos.listReleases({ owner, repo, per_page, page })
-      ).data;
+      try {
+        releaseList = (
+          await octokit.repos.listReleases({ owner, repo, per_page, page })
+        ).data;
+      } catch (e) {
+        setShowSnackbar(true);
+        break;
+      }
       fullReleaseList = fullReleaseList.concat(releaseList);
       page = page + 1;
     } while (releaseList.length > 0);
-
+    setShowSpinner(false);
     setList(fullReleaseList);
     originalList.current = fullReleaseList;
   };
@@ -172,8 +204,24 @@ function App({}: AppProps) {
         />
       </Box>
       <Paper className={styles.listContainer} variant="outlined">
+        {showSpinner ? <CircularProgress className={styles.spinner} /> : null}
         {list ? <ChangelogList releaseList={list} /> : null}
       </Paper>
+      <Snackbar
+        open={showSnackbar}
+        autoHideDuration={6000}
+        onClose={handleSnackbarClose}
+      >
+        <SnackbarContent
+          className={styles.snackbarContent}
+          message={
+            <Box className={styles.snackbarMessageContainer}>
+              <ErrorOutlineIcon className={styles.snackbarMessageIcon} />
+              <Typography>Error 404: Owner or Repo not found</Typography>
+            </Box>
+          }
+        />
+      </Snackbar>
     </ThemeProvider>
   );
 }
