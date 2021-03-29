@@ -13,6 +13,14 @@ Leverages:
 - Fuse.js for fuzzy searching
 - Snowpack for bundling / builds
 
+## TODO
+
+- Pull code out of the App component and place it into its own components as App is extremely messy right now
+- Testing of any kind, in general. There are no tests right now
+- Fix the layout on mobile, right now it is extremely squashed. Inputs need to stack on each other
+- Fix the paper with text on it from going off the screen. There's already a scroll bar due to the virtualization, having the box go off the screen and cause another scroll bar looks and feels atrocious. Should limit the height to the viewport.
+- Auto-populate the Repo with options when a valid owner is provided. Would be preferable if this list was sorted and searchable as well.
+
 ## Available Scripts
 
 ### yarn start
