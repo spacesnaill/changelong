@@ -1,18 +1,61 @@
 import React, { useState, useEffect, SyntheticEvent, useRef } from 'react';
-import './App.css';
 
 import { Octokit } from '@octokit/rest';
 import Fuse from 'fuse.js';
 import { DebounceInput } from 'react-debounce-input';
+import {
+  Box,
+  Button,
+  Paper,
+  TextField,
+  useMediaQuery,
+  CssBaseline,
+} from '@material-ui/core';
+import {
+  makeStyles,
+  createMuiTheme,
+  ThemeProvider,
+} from '@material-ui/core/styles';
 
 import ChangelogList from './components/ChangelogList';
 import BackToTop from './components/BackToTop';
-import styles from './styles/changelog.module.css';
 import type { releaseResponseData } from '../types/get-release-response';
 
 interface AppProps {}
 
+const useStyles = makeStyles({
+  listContainer: {
+    justifyContent: 'center',
+    margin: 'auto',
+    width: '60%',
+    height: '100vh',
+    padding: '0.5em',
+  },
+  formContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    margin: 'auto',
+    marginTop: '2em',
+    width: '60%',
+  },
+  formInput: { marginRight: '2em' },
+  search: { textAlign: 'center', width: '68%', marginBottom: '2em' },
+});
+
 function App({}: AppProps) {
+  const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+
+  const theme = React.useMemo(
+    () =>
+      createMuiTheme({
+        palette: {
+          type: prefersDarkMode ? 'dark' : 'light',
+        },
+      }),
+    [prefersDarkMode],
+  );
+
+  const styles = useStyles();
   const originalList = useRef<releaseResponseData>([]);
   const [list, setList] = useState<releaseResponseData | null>(null);
 
@@ -76,26 +119,40 @@ function App({}: AppProps) {
   }, [searchQuery]);
 
   return (
-    <>
-      <div className={styles.formContainer}>
-        <label htmlFor="owner">Owner: </label>
-        <input
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Box className={styles.formContainer}>
+        <TextField
+          required
+          className={styles.formInput}
+          label="Owner"
+          variant="outlined"
           value={owner}
           onChange={handleOwnerChange}
           id="owner"
           type="text"
         />
-        <label htmlFor="repo">Repo: </label>
-        <input value={repo} onChange={handleRepoChange} id="repo" type="text" />
-        <button
+        <TextField
+          required
+          className={styles.formInput}
+          label="Repo"
+          variant="outlined"
+          value={repo}
+          onChange={handleRepoChange}
+          id="repo"
+          type="text"
+        />
+        <Button
+          variant="contained"
+          color="primary"
           type="submit"
           onClick={handleSubmit}
           disabled={!(owner && repo)}
         >
           Submit
-        </button>
-      </div>
-      <div className={styles.formContainer}>
+        </Button>
+      </Box>
+      <Box className={styles.formContainer}>
         <DebounceInput
           minLength={2}
           debounceTimeout={300}
@@ -105,13 +162,13 @@ function App({}: AppProps) {
           placeholder="Search"
           className={styles.search}
           value={searchQuery}
+          element={TextField}
         />
-      </div>
-      <div className={styles.listContainer}>
+      </Box>
+      <Paper className={styles.listContainer} variant="outlined">
         {list ? <ChangelogList releaseList={list} /> : null}
-      </div>
-      <BackToTop />
-    </>
+      </Paper>
+    </ThemeProvider>
   );
 }
 

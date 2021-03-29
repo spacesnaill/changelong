@@ -1,9 +1,7 @@
 import React from 'react';
 
-import type { Endpoints } from '@octokit/types';
 import { Virtuoso as List } from 'react-virtuoso';
 
-import styles from '../styles/changelog.module.css';
 import ChangelogItem from './ChangelogItem';
 import type { releaseResponseData } from '../../types/get-release-response';
 
