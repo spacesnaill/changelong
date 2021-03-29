@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@material-ui/core": "^4.11.3",
+    "@material-ui/icons": "^4.11.2",
     "@material-ui/lab": "^4.0.0-alpha.57",
     "@octokit/rest": "^18.4.0",
     "fuse.js": "^6.4.6",
